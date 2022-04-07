@@ -109,6 +109,10 @@
                             <a  href="{{ url('admin/Costomer') }}">
                                 <i class="fa fa-user" aria-hidden="true"></i>Costomer</a>
                         </li>
+                        <li class="@yield('banner_select')">
+                            <a  href="{{ url('admin/HomeBanner') }}">
+                                <i class="fa fa-user" aria-hidden="true"></i>Banner</a>
+                        </li>
                        
                       
                     </ul>

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\TaxController;
 use App\Http\Controllers\Admin\CostomerController;
+use App\Http\Controllers\Admin\HomeBannerController;
 
 
 use App\Http\Controllers\front\FrontController;
@@ -95,7 +96,13 @@ Route::group(['middleware'=>'admin_auth'],function(){
     Route::get('/admin/Costomer/delete/{id}', [CostomerController::class,'delete_Costomer']);
     Route::get('/admin/Costomer/status/{type}/{id}', [CostomerController::class,'status_Costomer']);
     Route::get('/admin/Costomer/view/{id}', [CostomerController::class,'view_Costomer']);
-
+    
+    Route::get('/admin/HomeBanner', [HomeBannerController::class,'index']);
+    Route::get('/admin/HomeBanner/manage_HomeBanner', [HomeBannerController::class,'manage_HomeBanner']);
+    Route::get('/admin/HomeBanner/HomeBanner_manage/{id}', [HomeBannerController::class,'manage_HomeBanner']);
+    Route::post('/admin/HomeBanner/manage_HomeBanner_process', [HomeBannerController::class,'manage_HomeBanner_process'])->name('HomeBannerprocess');
+    Route::get('/admin/HomeBanner/delete/{id}', [HomeBannerController::class,'delete_HomeBanner']);
+    Route::get('/admin/HomeBanner/status/{type}/{id}', [HomeBannerController::class,'status_HomeBanner']);
     
    
 

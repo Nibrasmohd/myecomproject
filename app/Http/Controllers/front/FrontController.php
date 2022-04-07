@@ -34,6 +34,50 @@ class FrontController extends Controller
                 
             }
         }
+
+        $result['brands'] = DB::table('brands')->where(['is_home'=>1])
+        ->where(['status'=>1])->get();
+
+        $result['featured'] = DB::table('products')->where(['is_featured'=>1])
+        ->where(['status'=>1])->get();
+
+        foreach($result['featured'] as $item){
+            $result['home_products_featured'][$item->id] = DB::table('product_attr')
+            ->leftJoin('sizes','sizes.id','=','product_attr.size_id')
+                ->leftJoin('colours','colours.id','=','product_attr.color_id')
+                ->where(['product_attr.product_id'=>$item->id])
+                ->get();
+        }
+
+        $result['discount'] = DB::table('products')->where(['is_discounted'=>1])
+        ->where(['status'=>1])->get();
+
+        foreach($result['discount'] as $item){
+            $result['home_products_discount'][$item->id] = DB::table('product_attr')
+            ->leftJoin('sizes','sizes.id','=','product_attr.size_id')
+                ->leftJoin('colours','colours.id','=','product_attr.color_id')
+                ->where(['product_attr.product_id'=>$item->id])
+                ->get();
+        }
+        $result['trend'] = DB::table('products')->where(['is_trending'=>1])
+        ->where(['status'=>1])->get();
+
+        foreach($result['trend'] as $item){
+            $result['home_products_trend'][$item->id] = DB::table('product_attr')
+            ->leftJoin('sizes','sizes.id','=','product_attr.size_id')
+                ->leftJoin('colours','colours.id','=','product_attr.color_id')
+                ->where(['product_attr.product_id'=>$item->id])
+                ->get();
+        }
+        $result['homebanner'] = DB::table('home_banners')->where(['status'=>1])
+        ->get();
+ 
+
+        
+
+         
+
+      
         // echo "<pre>";
         //   print_r($result['home_catogories_products']);
         // echo "</pre>";
