@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">    
-    <title>Daily Shop | Home</title>
+    
+<meta name="csrf-token" content="{{ csrf_token() }}">
+    <title> @yield('pagetitle') </title>
     
     <!-- Font awesome -->
     <link href="{{ asset('front_assets/css/font-awesome.css') }}" rel="stylesheet">
@@ -38,10 +40,11 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  
+    
+   
 
   </head>
-  <body> 
+  <body class="productPage"> 
    <!-- wpf loader Two -->
     <div id="wpf-loader-two">          
       <div class="wpf-loader-two-inner">
@@ -52,8 +55,6 @@
   <!-- SCROLL TOP BUTTON -->
     <a class="scrollToTop" href="#"><i class="fa fa-chevron-up"></i></a>
   <!-- END SCROLL TOP BUTTON -->
-
-
   <!-- Start header section -->
   <header id="aa-header">
     <!-- start header top  -->
@@ -104,9 +105,14 @@
                 <ul class="aa-head-top-nav-right">
                   <li><a href="account.html">My Account</a></li>
                   <li class="hidden-xs"><a href="wishlist.html">Wishlist</a></li>
-                  <li class="hidden-xs"><a href="cart.html">My Cart</a></li>
+                  <li class="hidden-xs"><a href="{{ url('/cart') }}">My Cart</a></li>
                   <li class="hidden-xs"><a href="checkout.html">Checkout</a></li>
-                  <li><a href="" data-toggle="modal" data-target="#login-modal">Login</a></li>
+                  @if (session()->has('FRONT_USER_LOGIN')!= null)
+                     <li><a href="{{ url('/logout') }}">Logout</a></li>    
+                  @else 
+                     <li><a href="" data-toggle="modal" data-target="#login-modal">Login</a></li>
+                  @endif
+                  
                 </ul>
               </div>
             </div>
@@ -134,48 +140,56 @@
               </div>
               <!-- / logo  -->
                <!-- cart box -->
+               @php
+                   $totelprice = 0;
+                   $getAddtocartTotalitem=getAddtocartTotalitem();
+                   $totalcartitem=count($getAddtocartTotalitem);
+               @endphp
               <div class="aa-cartbox">
-                <a class="aa-cart-link" href="#">
+                <a class="aa-cart-link" href="#" id="cattbox">
                   <span class="fa fa-shopping-basket"></span>
                   <span class="aa-cart-title">SHOPPING CART</span>
-                  <span class="aa-cart-notify">2</span>
+                  <span class="aa-cart-notify">{{ $totalcartitem }}</span>
                 </a>
+                @if ($totalcartitem > 0)
                 <div class="aa-cartbox-summary">
                   <ul>
-                    <li>
-                      <a class="aa-cartbox-img" href="#"><img src="{{ asset('front_assets/img/woman-small-2.jpg') }}" alt="img"></a>
+                    @foreach ($getAddtocartTotalitem as $item)
+                    @php
+                     $totelprice = $totelprice + ( $item->quantity * $item->price )   
+                    @endphp
+
+                    <li id="cart_box{{ $item->attr_id }}">
+                      <a class="aa-cartbox-img" href="{{ url('product/'.$item->slug) }}">
+                        @if ($item->image != '')
+                          <img src="{{ asset('images/'.$item->image) }}" alt="{{ $item->image }}"></a>
+                        @endif
                       <div class="aa-cartbox-info">
-                        <h4><a href="#">Product Name</a></h4>
-                        <p>1 x $250</p>
-                      </div>
-                      <a class="aa-remove-product" href="#"><span class="fa fa-times"></span></a>
-                    </li>
-                    <li>
-                      <a class="aa-cartbox-img" href="#"><img src="{{ asset('front_assets/img/woman-small-1.jpg') }}" alt="img"></a>
-                      <div class="aa-cartbox-info">
-                        <h4><a href="#">Product Name</a></h4>
-                        <p>1 x $250</p>
-                      </div>
-                      <a class="aa-remove-product" href="#"><span class="fa fa-times"></span></a>
-                    </li>                    
+                        <h4><a href="#">{{ $item->name }}</a></h4>
+                        <p>{{ $item->quantity }} x $ {{$item->price }}</p>
+                      </div>         
+                      <a class="aa-remove-product" onclick="delete_cart('{{ $item->attr_id }}','{{ $item->cartid }}')" href="#"><span class="fa fa-times"></span></a>
+                    </li>  
+                    @endforeach                 
                     <li>
                       <span class="aa-cartbox-total-title">
                         Total
                       </span>
                       <span class="aa-cartbox-total-price">
-                        $500
+                        ${{ $totelprice }}
                       </span>
                     </li>
                   </ul>
                   <a class="aa-cartbox-checkout aa-primary-btn" href="checkout.html">Checkout</a>
                 </div>
+                @endif
               </div>
               <!-- / cart box -->
               <!-- search box -->
               <div class="aa-search-box">
                 <form action="">
-                  <input type="text" name="" id="" placeholder="Search here ex. 'man' ">
-                  <button type="submit"><span class="fa fa-search"></span></button>
+                  <input type="text"  id="search_str" placeholder="Search here ex. 'man' ">
+                  <button type="button" onclick="funsearch()"><span class="fa fa-search"></span></button>
                 </form>
               </div>
               <!-- / search box -->             
@@ -203,10 +217,7 @@
           </div>
           <div class="navbar-collapse collapse">
             <!-- Left nav -->
-            <ul class="nav navbar-nav">
-              <li><a href="index.html">Home</a></li>
               {!! getTopNavCat() !!}
-            </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>       
@@ -316,6 +327,18 @@
   </footer>
   <!-- / footer -->
 
+  @php
+      if(isset($_COOKIE['login_email']) && isset($_COOKIE['login_pwd']) ){
+        $login_email=$_COOKIE['login_email'];
+        $login_pwd=$_COOKIE['login_pwd'];
+        $is_remember="checked='checked'";
+      }else{
+        $login_email='';
+        $login_pwd='';
+        $is_remember=" ";
+      }
+  @endphp
+
   <!-- Login Modal -->  
   <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -323,16 +346,20 @@
         <div class="modal-body">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h4>Login or Register</h4>
-          <form class="aa-login-form" action="">
+          <form class="aa-login-form" action="" id="frmlogin">
+            @csrf
             <label for="">Username or Email address<span>*</span></label>
-            <input type="text" placeholder="Username or email">
+            <input type="email" name="str_login_email" value="{{ $login_email }}" placeholder="Username or email" required>
             <label for="">Password<span>*</span></label>
-            <input type="password" placeholder="Password">
-            <button class="aa-browse-btn" type="submit">Login</button>
-            <label for="rememberme" class="rememberme"><input type="checkbox" id="rememberme"> Remember me </label>
+            <input type="password" name="str_login_password" value="{{ $login_pwd }}" placeholder="Password" required>
+            <button class="aa-browse-btn" id="btnlogin" type="submit">Login</button>
+            <label for="rememberme" class="rememberme"><input type="checkbox" {{ $is_remember }} name="rememberme" id="rememberme"> Remember me </label>
+            <div style="clear: both;" id="login_msg">
+            </div>
+
             <p class="aa-lost-password"><a href="#">Lost your password?</a></p>
             <div class="aa-register-now">
-              Don't have an account?<a href="account.html">Register now!</a>
+              Don't have an account?<a href="{{ url('/registration') }}">Register now!</a>
             </div>
           </form>
         </div>                        
@@ -360,6 +387,7 @@
   <script type="text/javascript" src="{{ asset('front_assets/js/nouislider.js') }}"></script>
   <!-- Custom js -->
   <script src="{{ asset('front_assets/js/custom.js') }}"></script> 
+
 
   </body>
 </html>

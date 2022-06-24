@@ -30,6 +30,21 @@ use App\Http\Controllers\front\FrontController;
 
 
 Route::get('/', [FrontController::class,'index']);
+Route::get('product/{id}', [FrontController::class,'product']);
+Route::get('search/{id}', [FrontController::class,'search']);
+Route::get('category/{id}', [FrontController::class,'category']);
+Route::post('/addtocart', [FrontController::class,'add_to_cart']);
+Route::get('/deletecart', [FrontController::class,'delete_cart']);
+Route::get('/cart', [FrontController::class,'cart']);
+Route::get('/registration', [FrontController::class,'registration']);
+Route::post('/registration_process', [FrontController::class,'registration_process']);
+Route::post('/login_process', [FrontController::class,'login_process']);
+Route::get('/logout', function () {
+    session()->forget('FRONT_USER_LOGIN');
+    session()->forget('FRONT_USER_ID');
+    session()->forget('FRONT_USER_NAME');
+    return redirect('/');   
+});
 
 Route::get('/admin', [AdminController::class,'index']);
 Route::post('/admin/auth', [AdminController::class,'auth'])->name('admin.auth');

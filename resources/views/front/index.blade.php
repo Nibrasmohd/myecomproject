@@ -1,5 +1,5 @@
 @extends('front.layout')
-
+@section('pagetitle','Home page');
 @section('wrapper')
 <section id="aa-slider">
     <div class="aa-slider-area">
@@ -82,18 +82,20 @@
                         $activeclass=''; 
                       }
                     @endphp
+                  
                     <div class="tab-pane fade {{ $activeclass }}" id="cat{{ $item->id }}">
                        
                           @if (isset($home_catogories_products[$item->id][0]))
                               @foreach ($home_catogories_products[$item->id] as $list)
                               <ul class="aa-product-catg">
                               <li>
+                                
                               <figure>
-                                <a class="aa-product-img" href="#"><img src="{{ asset('images/'.$list->image) }}" alt="polo shirt img"></a>
-                                <a class="aa-add-card-btn"href="#"><span class="fa fa-shopping-cart"></span>Add To Cart</a>
+                                <a class="aa-product-img" href="{{ url('product/'.$list->slug) }}"><img src="{{ asset('images/'.$list->image) }}" alt="polo shirt img"></a>
+                                <a class="aa-add-card-btn" href="javascript:void(0)" onclick="home_add_to_cart('{{ $home_products_attr[$list->id][0]->proid }}','{{ $home_products_attr[$list->id][0]->title }}','{{ $home_products_attr[$list->id][0]->colour }}')"><span class="fa fa-shopping-cart"></span>Add To Cart</a>
                                   <figcaption>
                                   <h4 class="aa-product-title"><a href="#">{{ $list->name }}</a></h4>
-                                    <span class="aa-product-price">${{ $home_products_attr[$list->id][0]->price }}</span><span class="aa-product-price"><del>${{ $home_products_attr[$list->id][0]->price }}</del></span>
+                                    <span class="aa-product-price">${{ $home_products_attr[$list->id][0]->price }}</span><span class="aa-product-price"><del>${{ $home_products_attr[$list->id][0]->mrp }}</del></span>
                                   </figcaption>
                                 </figure>                        
                               </li>  
@@ -168,7 +170,7 @@
                     <li>
                       <figure>
                         <a class="aa-product-img" href="#"><img src="{{ asset('images/'.$item->image) }}" alt="polo shirt img"></a>
-                        <a class="aa-add-card-btn"href="#"><span class="fa fa-shopping-cart"></span>Add To Cart</a>
+                        <a class="aa-add-card-btn" href="javascript:void(0)" onclick="home_add_to_cart('{{ $home_products_featured[$item->id][0]->prid }}','{{ $home_products_featured[$item->id][0]->title }}','{{ $home_products_featured[$item->id][0]->colour }}')"><span class="fa fa-shopping-cart"></span>Add To Cart</a>
                          <figcaption>
                           <h4 class="aa-product-title"><a href="#"> {{ $item->name }}</a></h4>
                           <span class="aa-product-price">${{ $home_products_featured[$item->id][0]->price }}</span><span class="aa-product-price"><del>${{ $home_products_featured[$item->id][0]->mrp }}</del></span>
@@ -197,7 +199,7 @@
                     <li>
                       <figure>
                         <a class="aa-product-img" href="#"><img src="{{ asset('images/'.$item->image) }}" alt="polo shirt img"></a>
-                        <a class="aa-add-card-btn"href="#"><span class="fa fa-shopping-cart"></span>Add To Cart</a>
+                        <a class="aa-add-card-btn"href="#" onclick="home_add_to_cart('{{ $home_products_discount[$item->id][0]->prid }}','{{ $home_products_discount[$item->id][0]->title }}','{{ $home_products_discount[$item->id][0]->colour }}')"><span class="fa fa-shopping-cart" ></span>Add To Cart</a>
                          <figcaption>
                           <h4 class="aa-product-title"><a href="#">Polo T-Shirt</a></h4>
                           <span class="aa-product-price">${{ $home_products_discount[$item->id][0]->price }}</span><span class="aa-product-price"><del>${{ $home_products_discount[$item->id][0]->price }}</del></span>
@@ -230,10 +232,10 @@
                     <li>
                       <figure>
                         <a class="aa-product-img" href="#"><img src="{{ asset('images/'.$item->image) }}" alt="polo shirt img"></a>
-                        <a class="aa-add-card-btn"href="#"><span class="fa fa-shopping-cart"></span>Add To Cart</a>
-                         <figcaption>
+                        <a class="aa-add-card-btn"href="#" onclick="home_add_to_cart('{{ $home_products_trend[$item->id][0]->prid }}','{{ $home_products_trend[$item->id][0]->title }}','{{ $home_products_trend[$item->id][0]->colour }}')"><span class="fa fa-shopping-cart"></span>Add To Cart</a>
+                         <figcaption> 
                           <h4 class="aa-product-title"><a href="#">{{ $item->name }}</a></h4>
-                          <span class="aa-product-price">${{ $home_products_trend[$item->id][0]->price }}</span><span class="aa-product-price"><del>${{ $home_products_trend[$item->id][0]->price }}</del></span>
+                          <span class="aa-product-price">$ {{ $home_products_trend[$item->id][0]->price }}</span><span class="aa-product-price"><del>${{ $home_products_trend[$item->id][0]->mrp }}</del></span>
                         </figcaption>
                       </figure>                     
                     </li>
@@ -293,6 +295,14 @@
         </div>
       </div>
     </div>
+    
+    <form action="" id="frmAddtocart">
+      <input type="text" name="sizeid" id="sizeid">
+      <input type="text" name="colorid" id="colorid">
+      <input type="text" name="productqty" value="1" id="qty">
+      <input type="text" name="product_id"  id="product_id">
+      @csrf
+    </form>
   </section>
  
 

@@ -2604,6 +2604,7 @@ img {
 /*---- Login form ----*/
 
 .aa-login-form input[type="text"],
+.aa-login-form input[type="email"],
 .aa-login-form input[type="password"] {
   border: 1px solid #ccc;
   font-size: 16px;
@@ -4183,3 +4184,25 @@ img {
   }
 }
 
+.lead_time{
+  color: red;
+  margin-top: -12px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.aa-color-red{
+  background-color: red;
+}
+.active-color{
+  border: 2px solid #008000;
+}
+.left_cat_active{
+  color : #ff6666;
+}
+.field_error{
+  color: red;
+  margin-top: -17px;
+}
+#login_msg{
+  color: red;
+}

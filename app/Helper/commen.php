@@ -21,6 +21,29 @@ function getTopNavCat(){
     return $str;
 }
 
+function getAddtocartTotalitem(){
+    if (session()->has('FRONT_USER_LOGIN')) {
+        $uid=session()->get('FRONT_USER_LOGIN');
+        $user_type='reg';
+    }else{
+        $uid=getUserTempId();
+        $user_type="not_reg";
+    }
+
+    $result=DB::table('cart')
+     ->leftJoin('products','products.id','=','cart.product_id')
+     ->leftJoin('product_attr','product_attr.id','=','cart.product_attr_id')
+     ->leftJoin('sizes','sizes.id','=','product_attr.size_id')
+     ->leftJoin('colours','colours.id','=','product_attr.color_id')
+     ->where(['user_id'=>$uid])
+     ->where(['user_type'=>$user_type])
+     ->select('cart.id as cartid','cart.quantity','products.name','products.image','sizes.title','colours.colour',
+      'product_attr.price','products.slug','products.id as pid','product_attr.id as attr_id')
+     ->get();
+
+    return $result;
+}
+
 $html='';
 function buildTreeView($arr,$parent,$level=0,$prelevel= -1){
     global $html;
@@ -60,5 +83,9 @@ function getUserTempId(){
         return session()->get('USER_TEMP_ID');
     }
 }
+
+
+
+
 
 ?>
