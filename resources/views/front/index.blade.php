@@ -13,7 +13,7 @@
               <img data-seq src="{{ asset('images/banner/'.$item->image) }}" alt="Men slide img" />
             </div>
             <div class="seq-title">
-              <a data-seq target="_blank" href="{{ $homebanner[0]->btn_link }}" class="aa-shop-now-btn aa-secondary-btn">{{ $homebanner[0]->btn_txt }}</a>
+              <a data-seq target="_blank" href="{{ $homebanner[0]->btn_link }}" class="aa-shop-now-btn aa-secondary-btn">Shop now</a>
             </div>
           </li>
           @endforeach
